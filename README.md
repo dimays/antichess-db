@@ -18,7 +18,7 @@ We are currently on v0.0 of the site. The planned development phases include:
 
 This Entity Relationship Diagram shows how each table relates to the others, as well as a quick reference of field constraints (`PRIMARY KEY`, `NOT NULL`, `UNIQUE`, `FOREIGN_KEY`).
 
-![AntichessDB ERD](/acdb_app/static/acdb_app/img/ERD.png "AntichessDB ERD")
+![AntichessDB ERD](/static/acdb_app/img/ERD.png "AntichessDB ERD")
 
 ## Data Dictionary
 
