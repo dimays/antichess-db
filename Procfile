@@ -1,1 +1,1 @@
-web: gunicorn acdb.wsgi
+web: python manage.py collectstatic --noinput; gunicorn acdb.wsgi
