@@ -1,0 +1,13 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}AntichessDB{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'acdb_app/css/main.css' %}">
+</head>
+<body>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+    <h1>Welcome to AntichessDB!</h1>
+    <p>AntichessDB is a website that allows you to interact with data from Lichess specifically focused on the popular variant Antichess.</p>
+    <br>
+    <br>
+    <p><b>Coming Soon!</b></p>
+    <br>
+    <br>
+    <ul>
+        <li>{{ total_players|intcomma }} Players Evaluated</li>
+        <li>{{ total_events|intcomma }} Events Evaluated</li>
+        <li>{{ total_games|intcomma }} Games Evaluated</li>
+        <li>{{ total_moves|intcomma }} Moves Evaluated</li>
+        <li>{{ total_positions|intcomma }} Unique Positions Evaluated</li>
+    </ul>
+{% endblock %}
