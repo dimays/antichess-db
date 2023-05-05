@@ -14,6 +14,12 @@ We are currently on v0.0 of the site. The planned development phases include:
 | v0.3    | Analytics Launched                       | July 14, 2023          |
 | v1.0    | General Release                          | July 28, 2023          |
 
+## Data Model
+
+This Entity Relationship Diagram shows how each table relates to the others, as well as a quick reference of field constraints (`PRIMARY KEY`, `NOT NULL`, `UNIQUE`, `FOREIGN_KEY`).
+
+![AntichessDB ERD](/acdb_app/static/acdb_app/img/ERD.png, "AntichessDB ERD")
+
 ## Data Dictionary
 
 This data dictionary is foundational to all parts of the app. The records in these tables will be generated from an automated PGN parsing system (TBD) which will allow us to upsert records across the database for games fetched from the Lichess Public Database or from the Lichess API.
@@ -50,8 +56,6 @@ This data dictionary is foundational to all parts of the app. The records in the
 | deleted_at             | timestamp with timezone | Time (in UTC) at which this record was 'soft-deleted' (flagged deleted)                                                                         |
 
 ### `positions` Table
-
-## positions
 
 **A record for each unique position that has been achieved in at least one rated Antichess game on Lichess**
 
