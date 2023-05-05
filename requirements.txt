@@ -8,3 +8,4 @@ psycopg-pool==3.1.7
 python-dotenv==1.0.0
 sqlparse==0.4.4
 typing_extensions==4.5.0
+whitenoise==6.4.0
