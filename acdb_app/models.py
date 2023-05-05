@@ -363,5 +363,5 @@ class Move(models.Model):
         db_table_comment = "A record for each move played in a given rated Antichess game on Lichess"
 
     def __str__(self):
-        str_rep = f"({self.move_id}) {self.lichess_username}"
+        str_rep = f"({self.move_id}) Game {self.game}: {self.move_notation}"
         return str_rep
