@@ -31,7 +31,11 @@ DEBUG = strtobool(os.getenv('DEBUG_FLAG'))
 if DEBUG:
     ALLOWED_HOSTS = []
 else:
-    ALLOWED_HOSTS = ['antichessdb.com', 'antichess-db.herokuapp.com']
+    ALLOWED_HOSTS = [
+        'www.antichessdb.com', 
+        'antichessdb.com', 
+        'antichess-db.herokuapp.com'
+    ]
 
 
 # Application definition
