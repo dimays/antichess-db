@@ -1,19 +1,500 @@
 {% extends 'base.html' %}
 {% load custom_filters %}
+{% load static %}
 
 {% block content %}
-    <h1>Welcome to AntichessDB!</h1>
-    <p>AntichessDB is a website that allows you to interact with data from Lichess specifically focused on the popular variant Antichess.</p>
-    <br>
-    <br>
-    <p><b>Coming Soon!</b></p>
-    <br>
-    <br>
-    <ul>
-        <li>{{ total_players|intcomma }} Players Evaluated</li>
-        <li>{{ total_events|intcomma }} Events Evaluated</li>
-        <li>{{ total_games|intcomma }} Games Evaluated</li>
-        <li>{{ total_moves|intcomma }} Moves Evaluated</li>
-        <li>{{ total_positions|intcomma }} Unique Positions Evaluated</li>
-    </ul>
+  <div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Welcome to AntichessDB!</h1>
+            <p>AntichessDB is a website that allows you to interact with data from Lichess specifically focused on the popular variant Antichess.</p>
+            <p>Check out the project on <a href="https://github.com/dimays/antichess-db">Github</a> for more information.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <br>
+            <div class="alert alert-danger text-center fw-bold" role="alert">
+                Full Website Coming Soon!
+            </div>
+            <br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Database Ingestion Progress</h3>
+            <p>We are ingesting Antichess game data from the <a href="https://database.lichess.org/#variant_games">Lichess Open Database</a>, and will eventually setup an ongoing ingestion from the <a href="https://lichess.org/api">Lichess API</a>.</p>
+            <table class="table table-borderless">
+                <tbody>
+                    <tr>
+                        <td class="text-center">{{ total_players|intcomma }} Players Evaluated</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">{{ total_events|intcomma }} Events Evaluated</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">{{ total_games|intcomma }} Games Evaluated</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">{{ total_moves|intcomma }} Moves Evaluated</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">{{ total_positions|intcomma }} Unique Positions Evaluated</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Data Dictionary</h3>
+            <p>This Entity Relationship Diagram shows how each table relates to the others, as well as a quick reference of field constraints (PRIMARY KEY, NOT NULL, UNIQUE, FOREIGN_KEY).</p>
+            <img src="{% static 'acdb_app/img/ERD.png' %}" alt="AntichessDB Entity Relationship Diagram" class="img-fluid">
+            <br>
+            <br>
+            <h4>players</h4>
+            <p><b>A record for each player on Lichess who has played at least one rated Antichess game</b></p>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Column Name</th>
+                            <th>Data Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>player_id</td>
+                            <td>bigint</td>
+                            <td>Primary key representing a Lichess user who has played at least one rated Antichess game</td>
+                        </tr>
+                        <tr>
+                            <td>lichess_username</td>
+                            <td>varchar(30)</td>
+                            <td>Unique username for this Lichess player (always represented in lowercase)</td>
+                        </tr>
+                        <tr>
+                            <td>created_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was created</td>
+                        </tr>
+                        <tr>
+                            <td>updated_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was most recently updated</td>
+                        </tr>
+                        <tr>
+                            <td>deleted_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was 'soft-deleted' (flagged deleted)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <h4>events</h4>
+            <p><b>A record for each Lichess event (Arena or Swiss Tournament) during which at least one rated Antichess game was played</b></p>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Column Name</th>
+                            <th>Data Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event_id</td>
+                            <td>bigint</td>
+                            <td>Primary key representing a Lichess event</td>
+                        </tr>
+                        <tr>
+                             <td>lichess_event_id</td>
+                             <td>varchar(30)</td>
+                             <td>Unique, external Lichess ID for this Lichess event, prefixed with 'swiss-' if a Swiss tournament, prefixed with 'arena-' if an Arena tournament</td>
+                        </tr>
+                        <tr>
+                            <td>event_name</td>
+                            <td>varchar(30)</td>
+                            <td>Name for this Lichess event</td>
+                        </tr>
+                        <tr>
+                            <td>start_date_utc</td>
+                            <td>date</td>
+                            <td>Date (in UTC) on which this event began</td>
+                        </tr>
+                        <tr>
+                            <td>start_time_utc</td>
+                            <td>timestamp with timezone</td>
+                            <td>Timestamp (in UTC) at which this event began</td>
+                        </tr>
+                        <tr>
+                            <td>duration_minutes</td>
+                            <td>smallint</td>
+                            <td>Number of minutes this event lasted</td>
+                        </tr>
+                        <tr>
+                            <td>first_place_player_id</td>
+                            <td>bigint</td>
+                            <td>Foreign key, references players.player_id, represents the player that won this event</td>
+                        </tr>
+                        <tr>
+                            <td>second_place_player_id</td>
+                            <td>bigint</td>
+                            <td>Foreign key, references players.player_id, represents the player that got second place at this event</td>
+                        </tr>
+                        <tr>
+                            <td>third_place_player_id</td>
+                            <td>bigint</td>
+                            <td>Foreign key, references players.player_id, represents the player that got third place at this event</td>
+                        </tr>
+                        <tr>
+                            <td>created_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was created</td>
+                        </tr>
+                        <tr>
+                            <td>updated_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was most recently updated</td>
+                        </tr>
+                        <tr>
+                            <td>deleted_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was 'soft-deleted' (flagged deleted)</td>
+                        </tr>
+                      </tbody>
+                </table>
+            </div>
+            <br>
+            <h4>positions</h4>
+            <p><b>A record for each unique position that has been achieved in at least one rated Antichess game on Lichess</b></p>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Column Name</th>
+                            <th>Data Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>position_id</td>
+                            <td>bigint</td>
+                            <td>Primary key representing a unique board position</td>
+                        </tr>
+                        <tr>
+                            <td>fen</td>
+                            <td>varchar(100)</td>
+                            <td>Representation of this position in abbreviated Forsyth-Edwards Notation (FEN), does not include some fields which are not necessary for the purposes of evaluating the position, such as move number</td>
+                        </tr>
+                        <tr>
+                            <td>eval</td>
+                            <td>varchar(20)</td>
+                            <td>Formatted string representing a centipawn value (eg. '-1.3') or a forced mate (eg. '#7')</td>
+                        </tr>
+                        <tr>
+                            <td>cp</td>
+                            <td>decimal(9,1)</td>
+                            <td>Fairy Stockfish's centipawn evaluation for this position, with one decimal place (can be NULL if evaluation is a forced mate instead)</td>
+                        </tr>
+                        <tr>
+                            <td>mate</td>
+                            <td>smallint</td>
+                            <td>Fairy Stockfish's evaluation of the minimum number of moves until mate for this position, expressed as a positive if a mate for white, and as a negative if a mate for black (can be NULL if Fairy Stockfish cannot find a forced mate in this position)</td>
+                        </tr>
+                        <tr>
+                            <td>engine</td>
+                            <td>varchar(100)</td>
+                            <td>Full name of Fairy Stockfish version used for this position's evaluation</td>
+                        </tr>
+                        <tr>
+                            <td>depth</td>
+                            <td>smallint</td>
+                            <td>Depth to which Fairy Stockfish evaluated this position before producing this record's evaluation</td>
+                        </tr>
+                        <tr>
+                            <td>depth_limit</td>
+                            <td>smallint</td>
+                            <td>Maximum depth setting applied to Fairy Stockfish for this record's evaluation</td>
+                        </tr>
+                        <tr>
+                            <td>time_limit</td>
+                            <td>smallint</td>
+                            <td>Maximum time (in seconds) setting applied to Fairy Stockfish for this record's evaluation</td>
+                        </tr>
+                        <tr>
+                            <td>created_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was created</td>
+                        </tr>
+                        <tr>
+                            <td>updated_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was most recently updated</td>
+                        </tr>
+                        <tr>
+                            <td>deleted_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was 'soft-deleted' (flagged deleted)</td>
+                        </tr>
+                      </tbody>
+                </table>
+            </div>
+            <br>
+            <h4>games</h4>
+            <p><b>A record for each rated Antichess game played on Lichess</b></p>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Column Name</th>
+                            <th>Data Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>game_id</td>
+                            <td>bigint</td>
+                            <td>Primary key representing a unique rated Antichess game</td>
+                        </tr>
+                        <tr>
+                            <td>lichess_game_id</td>
+                            <td>varchar(30)</td>
+                            <td>Unique external Lichess ID for this game</td>
+                        </tr>
+                        <tr>
+                            <td>event_id</td>
+                            <td>bigint</td>
+                            <td>Foreign key, references events.event_id (can be null if this game did not take place within a Lichess Arena/Swiss Tournament)</td>
+                        </tr>
+                        <tr>
+                            <td>white_player_id</td>
+                            <td>bigint</td>
+                            <td>Foreign key, references players.player_id, represents the player of the white pieces in this game</td>
+                        </tr>
+                        <tr>
+                            <td>white_player_elo</td>
+                            <td>smallint</td>
+                            <td>Elo rating of the white player at the start of this game (rounded to the nearest whole number)</td>
+                        </tr>
+                        <tr>
+                            <td>white_player_elo_diff</td>
+                            <td>smallint</td>
+                            <td>Number of Elo points the white player gained or lost as a result of this game (rounded to the nearest whole number)</td>
+                        </tr>
+                        <tr>
+                            <td>black_player_id</td>
+                            <td>bigint</td>
+                            <td>Foreign key, references players.player_id, represents the player of the black pieces in this game</td>
+                        </tr>
+                        <tr>
+                            <td>black_player_elo</td>
+                            <td>smallint</td>
+                            <td>Elo rating of the black player at the start of this game (rounded to the nearest whole number)</td>
+                        </tr>
+                        <tr>
+                            <td>black_player_elo_diff</td>
+                            <td>smallint</td>
+                            <td>Number of Elo points the black player gained or lost as a result of this game (rounded to the nearest whole number)</td>
+                        </tr>
+                        <tr>
+                            <td>avg_player_elo</td>
+                            <td>smallint</td>
+                            <td>Average Elo rating between the white and the black player at the start of this game</td>
+                        </tr>
+                        <tr>
+                            <td>time_control</td>
+                            <td>varchar(30)</td>
+                            <td>Lichess-formatted string representing this game's time control (eg. '60+0' is a 1 minute game, no increment)</td>
+                        </tr>
+                        <tr>
+                            <td>time_control_base</td>
+                            <td>smallint</td>
+                            <td>Number of seconds each side started with on the clock for this game</td>
+                        </tr>
+                        <tr>
+                            <td>time_control_inc</td>
+                            <td>smallint</td>
+                            <td>Number of seconds added to each side's clock per move in this game</td>
+                        </tr>
+                        <tr>
+                            <td>termination</td>
+                            <td>varchar(50)</td>
+                            <td>Lichess-designated termination for this game</td>
+                        </tr>
+                        <tr>
+                            <td>result</td>
+                            <td>varchar(50)</td>
+                            <td>'1-0' (white won), '0-1' (black won), or '½-½' (draw) or other if terminated abnormally</td>
+                        </tr>
+                        <tr>
+                            <td>date_utc</td>
+                            <td>date</td>
+                            <td>Date (in UTC) on which this game began</td>
+                        </tr>
+                        <tr>
+                            <td>time_utc</td>
+                            <td>timestamp with timezone</td>
+                            <td>Timestamp (in UTC) at which this game began</td>
+                        </tr>
+                        <tr>
+                            <td>pgn</td>
+                            <td>text</td>
+                            <td>Full representation of this game in Portable Game Notation (PGN)</td>
+                        </tr>
+                        <tr>
+                            <td>created_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was created</td>
+                        </tr>
+                        <tr>
+                            <td>updated_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was most recently updated</td>
+                        </tr>
+                        <tr>
+                            <td>deleted_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was 'soft-deleted' (flagged deleted)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <h4>annotations</h4>
+            <p><b>A record for each move annotation (eg. '?' for Mistake, '??' for Blunder, etc.)</b></p>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Column Name</th>
+                            <th>Data Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>annotation_id</td>
+                            <td>bigint</td>
+                            <td>Primary key representing an annotation that can be applied to a move</td>
+                        </tr>
+                        <tr>
+                            <td>symbol</td>
+                            <td>varchar(10)</td>
+                            <td>Symbol for this annotation (eg. '?' for Mistake or '??' for Blunder)</td>
+                        </tr>
+                        <tr>
+                            <td>name</td>
+                            <td>varchar(30)</td>
+                            <td>Name for this annotation (eg. 'Missed Win', 'Excellent Move')</td>
+                        </tr>
+                        <tr>
+                            <td>desc</td>
+                            <td>varchar(200)</td>
+                            <td>Detailed description for this annotation</td>
+                        </tr>
+                        <tr>
+                            <td>created_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was created</td>
+                        </tr>
+                        <tr>
+                            <td>updated_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was most recently updated</td>
+                        </tr>
+                            <tr>
+                            <td>deleted_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was 'soft-deleted' (flagged deleted)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <h4>moves</h4>
+            <p><b>A record for each move played in a given rated Antichess game on Lichess</b></p>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Column Name</th>
+                            <th>Data Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>move_id</td>
+                            <td>bigint</td>
+                            <td>Primary key representing a unique instance of a move played in a rated Antichess game</td>
+                        </tr>
+                        <tr>
+                            <td>starting_position_id</td>
+                            <td>bigint</td>
+                            <td>Foreign key, references positions.position_id, represents the position at the start of this move</td>
+                        </tr>
+                        <tr>
+                            <td>resulting_position_id</td>
+                            <td>bigint</td>
+                            <td>Foreign key, references positions.position_id, represents the position that resulted from this move</td>
+                        </tr>
+                        <tr>
+                            <td>player_id</td>
+                            <td>bigint</td>
+                            <td>Foreign key, references players.player_id, represents the player that played this move</td>
+                        </tr>
+                        <tr>
+                            <td>game_id</td>
+                            <td>bigint</td>
+                            <td>Foreign key, references games.game_id, represents the game in which this move was played</td>
+                        </tr>
+                        <tr>
+                            <td>annotation_id</td>
+                            <td>bigint</td>
+                            <td>Foreign key, references annotations.annotation_id, represents the annotation for this move (eg. '?? blunder', '!! brilliant', etc.), can be null if this move does not have an appropriate annotation or has not yet been annotated</td>
+                        </tr>
+                        <tr>
+                          <td>move_number</td>
+                          <td>smallint</td>
+                          <td>Represents this move's number for this game; each notated move has two plies (eg. The third move played by white would be move 3 ply 5, and the third move played by black would be move 3 ply 6)</td>
+                        </tr>
+                        <tr>
+                            <td>ply_number</td>
+                            <td>smallint</td>
+                            <td>Represents this move's ply for this game; each notated move has two plies (eg. The third move played by white would be move 3 ply 5, and the third move played by black would be move 3 ply 6)</td>
+                        </tr>
+                        <tr>
+                            <td>move_notation</td>
+                            <td>varchar(20)</td>
+                            <td>Representation of this move in Algebraic notation (eg. '1.Nf3' or '4...h5')</td>
+                        </tr>
+                        <tr>
+                            <td>created_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was created</td>
+                        </tr>
+                        <tr>
+                            <td>updated_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was most recently updated</td>
+                        </tr>
+                        <tr>
+                            <td>deleted_at</td>
+                            <td>timestamp with timezone</td>
+                            <td>Time (in UTC) at which this record was 'soft-deleted' (flagged deleted)</td>
+                        </tr>
+                      </tbody>
+                </table>
+            </div>
+
+
+        </div>
+    </div>
+  </div>
 {% endblock %}

@@ -1,13 +1,34 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>{% block title %}AntichessDB{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'acdb_app/css/main.css' %}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'acdb_app/css/bootstrap.min.css' %}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'acdb_app/css/custom.css' %}">
 </head>
 <body>
-    <main>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'landing_page' %}">AntichessDB</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container my-4">
         {% block content %}{% endblock %}
     </main>
+
+    <!-- Bootstrap JS -->
+    <script src="{% static 'acdb_app/js/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>
